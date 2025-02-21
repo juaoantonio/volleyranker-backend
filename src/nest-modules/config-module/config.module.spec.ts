@@ -215,15 +215,15 @@ describe("Schema Unit Tests", () => {
 
 describe("ConfigModule Unit Tests", () => {
   it("should throw an error when env vars are invalid", () => {
-    expect(() => {
+    expect(async () => {
       Test.createTestingModule({
         imports: [
-          ConfigModule.forRoot({
+          await ConfigModule.forRoot({
             envFilePath: join(__dirname, "env.fake"),
           }),
         ],
       });
-    }).toThrowError('"DB_VENDOR" must be one of [mysql, sqlite]');
+    }).rejects.toThrowError('"DB_VENDOR" must be one of [mysql, sqlite]');
   });
 
   it("should be valid", () => {
