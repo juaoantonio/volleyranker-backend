@@ -199,3 +199,36 @@ export function ValidateObjectFields(
     });
   };
 }
+
+/**
+ * Custom decorator to validate that a string is not blank.
+ *
+ * @param {ValidationOptions} [validationOptions] - Additional validation options from `class-validator`.
+ * @returns {Function} A decorator function that registers the custom validator.
+ *
+ * @example
+ * ```typescript
+ * class User {
+ *   @IsNotBlank({ message: "Field cannot be blank." })
+ *   name: string;
+ * }
+ * ```
+ */
+export function IsNotBlank(validationOptions?: ValidationOptions) {
+  return function (object: Object, propertyName: string) {
+    registerDecorator({
+      name: "isNotBlank",
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          return typeof value === "string" && value.trim().length > 0;
+        },
+        defaultMessage(args: ValidationArguments) {
+          return "O campo não pode ser vazio ou conter apenas espaços";
+        },
+      },
+    });
+  };
+}

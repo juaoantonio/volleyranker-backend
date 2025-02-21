@@ -88,4 +88,24 @@ export class DateVo extends ValueObject {
   public isInFuture(): boolean {
     return this.date > new Date();
   }
+
+  /**
+   * Checks if the represented date is after a specific date.
+   *
+   * @param {DateVo} date - Date to compare against.
+   * @returns {boolean} True if it's after the date, false otherwise.
+   */
+  public isAfter(date: DateVo): boolean {
+    return this.date > date.getDate();
+  }
+
+  /**
+   * Checks if the represented date is before a specific date.
+   *
+   * @param {DateVo} date - Date to compare against.
+   * @returns {boolean} True if it's before the date, false otherwise.
+   */
+  public isBefore(date: DateVo): boolean {
+    return this.date < date.getDate();
+  }
 }
