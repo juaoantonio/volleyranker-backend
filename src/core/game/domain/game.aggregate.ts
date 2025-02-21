@@ -4,7 +4,11 @@ import { GameValidatorFactory } from "@core/game/domain/game.validator";
 import { AgeRange } from "@core/game/domain/age-range.vo";
 import { TeamFormat } from "@core/game/domain/team-format.vo";
 import { GameSchedule } from "@core/game/domain/game-schedule.vo";
-import { GameParticipant } from "@core/game/domain/game-participant.entity";
+import {
+  GameParticipant,
+  GameParticipantId,
+} from "@core/game/domain/game-participant.entity";
+import { EntityNotFoundError } from "@core/@shared/domain/error/entity-not-found.error";
 
 export class GameId extends Uuid {}
 
@@ -73,7 +77,8 @@ export class Game extends AggregateRoot<GameId> {
   readonly intensity: GameIntensity;
   readonly ageRange: AgeRange;
 
-  private participants: GameParticipant[] = [];
+  // Utilizamos um Map para armazenar participantes, onde a chave é o ID do participante.
+  private participants: Map<string, GameParticipant> = new Map();
 
   constructor(props: {
     id: GameId;
@@ -124,23 +129,22 @@ export class Game extends AggregateRoot<GameId> {
     });
   }
 
-  /**
-   * Retorna a lista de participantes inscritos no jogo.
-   */
+  public markParticipantAsPaid(participantId: GameParticipantId): void {
+    const participant = this.participants.get(participantId.toString());
+    if (!participant) {
+      throw new EntityNotFoundError(GameParticipantId, GameParticipant);
+    }
+    participant.markAsPaid();
+  }
+
   public getParticipants(): GameParticipant[] {
-    return this.participants;
+    return Array.from(this.participants.values());
   }
 
-  /**
-   * Retorna o número de vagas disponíveis.
-   */
   public availableSpots(): number {
-    return this.totalSpots - this.participants.length;
+    return this.totalSpots - this.participants.size;
   }
 
-  /**
-   * Indica se ainda há vagas disponíveis.
-   */
   public hasAvailableSpots(): boolean {
     return this.availableSpots() > 0;
   }
@@ -149,7 +153,22 @@ export class Game extends AggregateRoot<GameId> {
     if (!this.hasAvailableSpots()) {
       throw new Error("Não há vagas disponíveis para adicionar participantes.");
     }
-    this.participants.push(participant);
+    const key = participant.getId().toString();
+    if (this.participants.has(key)) {
+      throw new Error("Participante já adicionado ao jogo.");
+    }
+    this.participants.set(key, participant);
+  }
+
+  /**
+   * Remove um participante do jogo a partir do seu ID.
+   */
+  public removeParticipant(participantId: GameParticipantId): void {
+    const key = participantId.toString();
+    if (!this.participants.has(key)) {
+      throw new EntityNotFoundError(GameParticipantId, GameParticipant);
+    }
+    this.participants.delete(key);
   }
 
   validate(fields?: string[]): void {
@@ -161,7 +180,6 @@ export class Game extends AggregateRoot<GameId> {
         "totalSpots",
       );
     }
-    // Validação adicional: mínimo para 2 times com base no formato do jogo
     if (this.totalSpots < this.gameType.teamFormat.playersPerTeam * 2) {
       this.notification.addError(
         "O número de vagas deve ser suficiente para acomodar todos os jogadores.",

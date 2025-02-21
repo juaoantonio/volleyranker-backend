@@ -11,6 +11,7 @@ import {
 } from "@core/game/domain/game.aggregate";
 import { GameParticipant } from "@core/game/domain/game-participant.entity";
 import { Uuid } from "@core/@shared/domain/value-objects/uuid.vo";
+import { EntityNotFoundError } from "@core/@shared/domain/error/entity-not-found.error";
 
 describe("[UNITÁRIO] - [Game] - [Suite de testes para Game]", () => {
   beforeEach(() => {
@@ -195,6 +196,25 @@ describe("[UNITÁRIO] - [Game] - [Suite de testes para Game]", () => {
           GameParticipant.create("9836c3ec-d3f7-4aeb-8dde-4afa8f974b66"),
         ),
       ).toThrowError("Não há vagas disponíveis para adicionar participantes.");
+    });
+
+    it("deve remover um participante com sucesso", () => {
+      const game = Game.create(validGameProps);
+      const participant = GameParticipant.create(
+        "9836c3ec-d3f7-4aeb-8dde-4afa8f974b66",
+      );
+      game.addParticipant(participant);
+      expect(game.getParticipants().length).toBe(1);
+      game.removeParticipant(participant.getId());
+      expect(game.getParticipants().length).toBe(0);
+      expect(game.availableSpots()).toBe(validGameProps.totalSpots);
+    });
+
+    it("deve lançar erro ao tentar remover um participante inexistente", () => {
+      const game = Game.create(validGameProps);
+      expect(() => game.removeParticipant(Uuid.random())).toThrowError(
+        EntityNotFoundError,
+      );
     });
   });
 });
