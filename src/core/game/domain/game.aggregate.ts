@@ -4,6 +4,7 @@ import { GameValidatorFactory } from "@core/game/domain/game.validator";
 import { AgeRange } from "@core/game/domain/age-range.vo";
 import { TeamFormat } from "@core/game/domain/team-format.vo";
 import { GameSchedule } from "@core/game/domain/game-schedule.vo";
+import { GameParticipant } from "@core/game/domain/game-participant.entity";
 
 export class GameId extends Uuid {}
 
@@ -38,6 +39,7 @@ export class GameType {
 export interface GameCreationProps {
   id?: string;
   name: string;
+  organizerId: string;
   addressLink: string;
   gameSchedule: {
     day: Date;
@@ -70,6 +72,8 @@ export class Game extends AggregateRoot<GameId> {
   readonly pricePerPerson: number;
   readonly intensity: GameIntensity;
   readonly ageRange: AgeRange;
+
+  private participants: GameParticipant[] = [];
 
   constructor(props: {
     id: GameId;
@@ -120,16 +124,44 @@ export class Game extends AggregateRoot<GameId> {
     });
   }
 
+  /**
+   * Retorna a lista de participantes inscritos no jogo.
+   */
+  public getParticipants(): GameParticipant[] {
+    return this.participants;
+  }
+
+  /**
+   * Retorna o número de vagas disponíveis.
+   */
+  public availableSpots(): number {
+    return this.totalSpots - this.participants.length;
+  }
+
+  /**
+   * Indica se ainda há vagas disponíveis.
+   */
+  public hasAvailableSpots(): boolean {
+    return this.availableSpots() > 0;
+  }
+
+  public addParticipant(participant: GameParticipant): void {
+    if (!this.hasAvailableSpots()) {
+      throw new Error("Não há vagas disponíveis para adicionar participantes.");
+    }
+    this.participants.push(participant);
+  }
+
   validate(fields?: string[]): void {
     const validator = GameValidatorFactory.create();
     validator.validate(this.notification, this, fields);
     if (this.totalSpots <= 0) {
-      // throw new Error("O número de vagas deve ser maior que zero.");
       this.notification.addError(
         "O número de vagas deve ser maior que zero.",
         "totalSpots",
       );
     }
+    // Validação adicional: mínimo para 2 times com base no formato do jogo
     if (this.totalSpots < this.gameType.teamFormat.playersPerTeam * 2) {
       this.notification.addError(
         "O número de vagas deve ser suficiente para acomodar todos os jogadores.",

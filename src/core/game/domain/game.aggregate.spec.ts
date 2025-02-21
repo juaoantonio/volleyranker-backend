@@ -9,6 +9,8 @@ import {
   GameIntensity,
   GameSurface,
 } from "@core/game/domain/game.aggregate";
+import { GameParticipant } from "@core/game/domain/game-participant.entity";
+import { Uuid } from "@core/@shared/domain/value-objects/uuid.vo";
 
 describe("[UNITÁRIO] - [Game] - [Suite de testes para Game]", () => {
   beforeEach(() => {
@@ -31,6 +33,7 @@ describe("[UNITÁRIO] - [Game] - [Suite de testes para Game]", () => {
   const validGameProps: GameCreationProps = {
     name: "Jogo de Vôlei",
     addressLink: "http://example.com",
+    organizerId: Uuid.random().toString(),
     gameSchedule: {
       day: tomorrow,
       startTime: format(startDate, "HH:mm"),
@@ -157,6 +160,41 @@ describe("[UNITÁRIO] - [Game] - [Suite de testes para Game]", () => {
       expect(() => Game.create(propsInvalidSchedule)).toThrowError(
         "O horário de início deve ser anterior ao horário de término.",
       );
+    });
+  });
+
+  describe("[GRUPO] - [Participantes]", () => {
+    it("deve retornar o número correto de vagas disponíveis inicialmente", () => {
+      const game = Game.create(validGameProps);
+      expect(game.availableSpots()).toBe(validGameProps.totalSpots);
+      expect(game.hasAvailableSpots()).toBe(true);
+    });
+
+    it("deve permitir adicionar um participante se houver vagas disponíveis", () => {
+      const game = Game.create(validGameProps);
+      const participant = GameParticipant.create(
+        "9836c3ec-d3f7-4aeb-8dde-4afa8f974b66",
+      );
+      game.addParticipant(participant);
+      expect(game.getParticipants().length).toBe(1);
+      expect(game.availableSpots()).toBe(validGameProps.totalSpots - 1);
+    });
+
+    it("deve lançar erro ao tentar adicionar um participante se não houver vagas disponíveis", () => {
+      const game = Game.create(validGameProps);
+      // Preenche todas as vagas
+      for (let i = 0; i < validGameProps.totalSpots; i++) {
+        game.addParticipant(
+          GameParticipant.create(`${i}836c3ec-d3f7-4aeb-8dde-4afa8f974b66`),
+        );
+      }
+      expect(game.availableSpots()).toBe(0);
+      expect(game.hasAvailableSpots()).toBe(false);
+      expect(() =>
+        game.addParticipant(
+          GameParticipant.create("9836c3ec-d3f7-4aeb-8dde-4afa8f974b66"),
+        ),
+      ).toThrowError("Não há vagas disponíveis para adicionar participantes.");
     });
   });
 });
