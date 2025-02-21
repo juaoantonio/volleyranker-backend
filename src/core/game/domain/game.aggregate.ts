@@ -100,7 +100,6 @@ export class Game extends AggregateRoot<GameId> {
     this.pricePerPerson = props.pricePerPerson;
     this.intensity = props.intensity;
     this.ageRange = props.ageRange;
-    this.validate();
   }
 
   public static create(props: GameCreationProps): Game {
@@ -116,7 +115,7 @@ export class Game extends AggregateRoot<GameId> {
       props.gameSchedule.startTime,
       props.gameSchedule.endTime,
     );
-    return new Game({
+    const game = new Game({
       id,
       name: props.name,
       addressLink: props.addressLink,
@@ -127,6 +126,8 @@ export class Game extends AggregateRoot<GameId> {
       intensity: props.intensity,
       ageRange,
     });
+    game.validate();
+    return game;
   }
 
   public markParticipantAsPaid(participantId: GameParticipantId): void {
