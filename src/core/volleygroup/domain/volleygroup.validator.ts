@@ -1,6 +1,6 @@
 import { IsNotBlank } from "@core/@shared/domain/class-validator-decorators/custom-class-validator-decorators";
 import { MinLength } from "class-validator";
-import { VolleyGroup } from "@core/volleygroup/domain/volleygroup.aggregate.spec";
+import { VolleyGroup } from "@core/volleygroup/domain/volleygroup.aggregate";
 import { ClassValidatorFields } from "@core/@shared/domain/validators/class-validator-fields";
 import { INotification } from "@core/@shared/domain/validators/notification.interface";
 
