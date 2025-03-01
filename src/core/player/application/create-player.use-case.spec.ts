@@ -1,6 +1,7 @@
 import { InMemoryRepository } from "@core/@shared/infra/db/in-memory/in-memory-repository";
 import { Player, PlayerId } from "@core/player/domain/player.aggregate";
 import { CreatePlayerUseCase } from "@core/player/application/create-player.use-case";
+import { EntityValidationError } from "@core/@shared/domain/validators/validation.error";
 
 class StubPlayerRepository extends InMemoryRepository<PlayerId, Player> {
   getEntity() {
@@ -36,7 +37,7 @@ describe("[UNITÁRIO] - [CreatePlayerUseCase] - [Suite de testes para CreatePlay
         name: "jo", // nome inválido
         userId: "9b6fb193-479d-45cf-8962-f158c2460b07", // uuid inválido
       });
-    }).rejects.toThrowError();
+    }).rejects.toThrowError(EntityValidationError);
   });
 
   it("deve lançar uma exceção ao tentar criar um Player com userId inválido", async () => {
@@ -45,6 +46,6 @@ describe("[UNITÁRIO] - [CreatePlayerUseCase] - [Suite de testes para CreatePlay
         name: "Jogador", // nome válido
         userId: "9b6fb193-479d-45cf-8962-f158c2460b0", // uuid inválido
       });
-    }).rejects.toThrowError();
+    }).rejects.toThrowError(EntityValidationError);
   });
 });

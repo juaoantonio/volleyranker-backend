@@ -7,13 +7,13 @@ import { IsNotBlank } from "@core/@shared/domain/class-validator-decorators/cust
 class PlayerRules {
   @MinLength(3, {
     message: "Deve ter no mínimo 3 caracteres",
-    groups: ["name"],
+    groups: ["_name"],
   })
   @IsNotBlank({
     message: "Não deve estar em branco",
-    groups: ["name"],
+    groups: ["_name"],
   })
-  name: string;
+  _name: string;
 
   @IsUUID("4", {
     message: "Deve ser um UUID válido",

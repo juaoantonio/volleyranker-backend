@@ -42,7 +42,6 @@ export class Player extends AggregateRoot<PlayerId> {
   static OVERALL_BALANCE_BONUS = 2;
 
   readonly userId: string;
-  readonly name: string;
   readonly attackStat: number;
   readonly defenseStat: number;
   readonly setStat: number;
@@ -55,7 +54,7 @@ export class Player extends AggregateRoot<PlayerId> {
   constructor(props: PlayerConstructorProps) {
     super(props.id);
     this.userId = props.userId;
-    this.name = props.name;
+    this._name = props.name;
     this.attackStat = props.attackStat;
     this.defenseStat = props.defenseStat;
     this.setStat = props.setStat;
@@ -64,6 +63,12 @@ export class Player extends AggregateRoot<PlayerId> {
     this.receptionStat = props.receptionStat;
     this.positioningStat = props.positioningStat;
     this.consistencyStat = props.consistencyStat;
+  }
+
+  private _name: string;
+
+  get name(): string {
+    return this._name;
   }
 
   private _hasBeenEvaluated: boolean = false;
@@ -95,6 +100,10 @@ export class Player extends AggregateRoot<PlayerId> {
 
   static fake(): typeof PlayerFakeBuilder {
     return PlayerFakeBuilder;
+  }
+
+  public changeName(name: string): void {
+    this._name = name;
   }
 
   validate(fields?: string[]): void {

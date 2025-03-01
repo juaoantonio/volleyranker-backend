@@ -196,7 +196,10 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
       expect(player.notification.hasErrors()).toBe(true);
       expect(player.notification).notificationContainsErrorMessages([
         {
-          name: ["Não deve estar em branco", "Deve ter no mínimo 3 caracteres"],
+          _name: [
+            "Não deve estar em branco",
+            "Deve ter no mínimo 3 caracteres",
+          ],
         },
       ]);
     });
