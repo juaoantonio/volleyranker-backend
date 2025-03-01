@@ -1,9 +1,26 @@
-import { Max, Min } from "class-validator";
+import { IsUUID, Max, Min, MinLength } from "class-validator";
 import { Player } from "@core/player/domain/player.aggregate";
 import { ClassValidatorFields } from "@core/@shared/domain/validators/class-validator-fields";
 import { INotification } from "@core/@shared/domain/validators/notification.interface";
+import { IsNotBlank } from "@core/@shared/domain/class-validator-decorators/custom-class-validator-decorators";
 
 class PlayerRules {
+  @MinLength(3, {
+    message: "Deve ter no mínimo 3 caracteres",
+    groups: ["name"],
+  })
+  @IsNotBlank({
+    message: "Não deve estar em branco",
+    groups: ["name"],
+  })
+  name: string;
+
+  @IsUUID("4", {
+    message: "Deve ser um UUID válido",
+    groups: ["userId"],
+  })
+  userId: string;
+
   @Min(0, { message: "Deve ser maior ou igual a 0", groups: ["attackStat"] })
   @Max(100, {
     message: "Deve ser menor ou igual a 100",

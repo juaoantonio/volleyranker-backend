@@ -1,10 +1,10 @@
-import { Player } from "@core/player/domain/player.aggregate";
+import { Player, PlayerId } from "@core/player/domain/player.aggregate";
 
 describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
   describe("[GRUPO] - [Criação do Player]", () => {
     it("deve criar uma instância de Player com ID aleatório quando nenhum ID for fornecido", () => {
       const props = {
-        userId: "user123",
+        userId: "9b6fb193-479d-45cf-8962-f158c2460b17",
         name: "Jogador Teste",
         attackStat: 80,
         defenseStat: 70,
@@ -29,7 +29,7 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
       const customId = "9b6fb193-479d-45cf-8962-f158c2460b07";
       const props = {
         id: customId,
-        userId: "user456",
+        userId: "9b6fb193-479d-45cf-8962-f158c2460b09",
         name: "Jogador com ID customizado",
         attackStat: 75,
         defenseStat: 70,
@@ -65,7 +65,10 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
           ...stats,
         };
 
-        const player = Player.create(props);
+        const player = new Player({
+          id: PlayerId.random(),
+          ...props,
+        });
         expect(player.calculateOverall()).toBe(82);
         expect(player.notification.hasErrors()).toBe(false);
       });
@@ -88,7 +91,10 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
           name: "Jogador Desequilibrado",
           ...stats,
         };
-        const player = Player.create(props);
+        const player = new Player({
+          id: PlayerId.random(),
+          ...props,
+        });
         expect(player.calculateOverall()).toBe(78);
         expect(player.notification.hasErrors()).toBe(false);
       });
@@ -112,7 +118,10 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
           ...stats,
         };
 
-        const player = Player.create(props);
+        const player = new Player({
+          id: PlayerId.random(),
+          ...props,
+        });
 
         // Cálculos:
         // baseScore = 120 * (soma dos pesos = 1) = 120
@@ -136,7 +145,7 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
         consistencyStat: 77,
       };
       const props = {
-        userId: "user123",
+        userId: "9b6fb193-479d-45cf-8962-f158c2460b08",
         name: "Jogador Teste",
         ...stats,
       };
@@ -164,7 +173,10 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
         ...stats,
       };
 
-      const player = Player.create(props);
+      const player = new Player({
+        id: PlayerId.random(),
+        ...props,
+      });
       player.validate();
 
       expect(player.notification.hasErrors()).toBe(true);
@@ -172,6 +184,19 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
         {
           attackStat: ["Deve ser menor ou igual a 100"],
           consistencyStat: ["Deve ser maior ou igual a 0"],
+        },
+      ]);
+    });
+
+    it("deve retornar erros de validação para player com nome com menos de 3 caracteres", () => {
+      const player = Player.create({
+        name: "",
+        userId: "9b6fb193-479d-45cf-8962-f158c2460b07",
+      });
+      expect(player.notification.hasErrors()).toBe(true);
+      expect(player.notification).notificationContainsErrorMessages([
+        {
+          name: ["Não deve estar em branco", "Deve ter no mínimo 3 caracteres"],
         },
       ]);
     });

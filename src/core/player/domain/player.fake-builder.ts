@@ -1,7 +1,7 @@
 import { Chance } from "chance";
 import {
   Player,
-  PlayerCreationProps,
+  PlayerConstructorProps,
   PlayerId,
 } from "@core/player/domain/player.aggregate";
 
@@ -179,7 +179,8 @@ export class PlayerFakeBuilder<TBuild = Player> {
         index,
       );
 
-      const creationProps: PlayerCreationProps = {
+      const constructorProps: PlayerConstructorProps = {
+        id: idValue as PlayerId,
         userId: userIdValue,
         name: nameValue,
         attackStat: attackStatValue,
@@ -192,12 +193,7 @@ export class PlayerFakeBuilder<TBuild = Player> {
         consistencyStat: consistencyStatValue,
       };
 
-      if (idValue) {
-        creationProps.id =
-          typeof idValue === "string" ? idValue : idValue.toString();
-      }
-
-      return Player.create(creationProps);
+      return new Player(constructorProps);
     });
 
     return this.countObjs === 1 ? (players[0] as any) : players;

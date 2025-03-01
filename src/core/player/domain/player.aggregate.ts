@@ -1,6 +1,7 @@
 import { AggregateRoot } from "@core/@shared/domain/aggregate-root";
 import { Uuid } from "@core/@shared/domain/value-objects/uuid.vo";
 import { PlayerValidatorFactory } from "@core/player/domain/player.validator";
+import { PlayerFakeBuilder } from "@core/player/domain/player.fake-builder";
 
 export class PlayerId extends Uuid {}
 
@@ -23,15 +24,6 @@ export interface PlayerCreationProps {
   id?: string;
   userId: string;
   name: string;
-
-  attackStat: number;
-  defenseStat: number;
-  setStat: number;
-  serviceStat: number;
-  blockStat: number;
-  receptionStat: number;
-  positioningStat: number;
-  consistencyStat: number;
 }
 
 export class Player extends AggregateRoot<PlayerId> {
@@ -74,6 +66,12 @@ export class Player extends AggregateRoot<PlayerId> {
     this.consistencyStat = props.consistencyStat;
   }
 
+  private _hasBeenEvaluated: boolean = false;
+
+  get hasBeenEvaluated(): boolean {
+    return this._hasBeenEvaluated;
+  }
+
   public static create(props: PlayerCreationProps): Player {
     const id = props.id
       ? PlayerId.create(props.id)
@@ -82,17 +80,21 @@ export class Player extends AggregateRoot<PlayerId> {
       id: id,
       userId: props.userId,
       name: props.name,
-      attackStat: props.attackStat,
-      defenseStat: props.defenseStat,
-      setStat: props.setStat,
-      serviceStat: props.serviceStat,
-      blockStat: props.blockStat,
-      receptionStat: props.receptionStat,
-      positioningStat: props.positioningStat,
-      consistencyStat: props.consistencyStat,
+      attackStat: 50,
+      defenseStat: 50,
+      setStat: 50,
+      serviceStat: 50,
+      blockStat: 50,
+      receptionStat: 50,
+      positioningStat: 50,
+      consistencyStat: 50,
     });
     player.validate();
     return player;
+  }
+
+  static fake(): typeof PlayerFakeBuilder {
+    return PlayerFakeBuilder;
   }
 
   validate(fields?: string[]): void {
