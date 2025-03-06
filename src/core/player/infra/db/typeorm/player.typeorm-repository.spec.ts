@@ -19,4 +19,8 @@ describe("[INTEGRAÇÃO] - [PlayerTypeormRepository] - Suíte de testes do Playe
       new UnitOfWorkTypeORM(setup.dataSource),
     );
   });
+
+  afterAll(async () => {
+    await setup.dataSource.destroy();
+  });
 });
