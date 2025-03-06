@@ -31,7 +31,7 @@ it("should not persist invalid entity", async () => {
   const repository = new StubExampleEntityRepository();
   const createExampleEntity = new CreateExampleUseCase(repository);
 
-  expect(async () => {
+  await expect(async () => {
     await createExampleEntity.execute({ name: "Example Entity", age: 17 });
   }).rejects.toThrowError("Invalid entity");
 });

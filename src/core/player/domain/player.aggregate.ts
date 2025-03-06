@@ -18,6 +18,7 @@ export interface PlayerConstructorProps {
   receptionStat: number;
   positioningStat: number;
   consistencyStat: number;
+  hasBeenEvaluated?: boolean;
 }
 
 export interface PlayerCreationProps {
@@ -63,6 +64,7 @@ export class Player extends AggregateRoot<PlayerId> {
     this.receptionStat = props.receptionStat;
     this.positioningStat = props.positioningStat;
     this.consistencyStat = props.consistencyStat;
+    this._hasBeenEvaluated = props.hasBeenEvaluated;
   }
 
   private _name: string;
