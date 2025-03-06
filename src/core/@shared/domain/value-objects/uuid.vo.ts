@@ -29,8 +29,11 @@ export class Uuid extends Identifier {
    * @param {string} value - The UUID value to use.
    * @returns {Uuid} New Uuid instance.
    */
-  public static create(value: string): Uuid {
-    return new Uuid(value);
+  public static create<T extends Uuid>(
+    this: new (value: string) => T,
+    value: string,
+  ): T {
+    return new this(value);
   }
 
   /**
@@ -38,8 +41,8 @@ export class Uuid extends Identifier {
    *
    * @returns {Uuid} New Uuid instance.
    */
-  public static random(): Uuid {
-    return new Uuid();
+  public static random<T extends Uuid>(this: new () => T): T {
+    return new this();
   }
 
   /**
