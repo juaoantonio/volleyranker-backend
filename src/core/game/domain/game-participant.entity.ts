@@ -7,8 +7,8 @@ export class GameParticipantId extends Uuid {}
 export class GameParticipant extends Entity<GameParticipantId> {
   readonly playerId: PlayerId;
 
-  constructor(playerId: string, hasPaid: boolean = false, id?: string) {
-    super(id ? GameParticipantId.create(id) : GameParticipantId.random());
+  constructor(playerId: string, hasPaid: boolean = false) {
+    super(GameParticipantId.create(playerId));
     this.playerId = PlayerId.create(playerId);
     this._hasPaid = hasPaid;
   }
@@ -19,12 +19,14 @@ export class GameParticipant extends Entity<GameParticipantId> {
     return this._hasPaid;
   }
 
-  public static create(
-    playerId: string,
-    hasPaid: boolean = false,
-    id?: string,
-  ): GameParticipant {
-    return new GameParticipant(playerId, hasPaid, id);
+  public static create({
+    playerId,
+    hasPaid = false,
+  }: {
+    playerId: string;
+    hasPaid?: boolean;
+  }): GameParticipant {
+    return new GameParticipant(playerId, hasPaid);
   }
 
   public static createFromPlayer(player: Player): GameParticipant {

@@ -17,7 +17,7 @@ export class Uuid extends Identifier {
    *
    * @param {string} [value] - UUID value. If not provided, a new UUID will be generated.
    */
-  protected constructor(value?: string) {
+  constructor(value?: string) {
     super();
     this.value = value || uuidv4();
     this.validate();

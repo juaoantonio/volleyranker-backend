@@ -9,6 +9,7 @@ import {
   GameParticipantId,
 } from "@core/game/domain/game-participant.entity";
 import { EntityNotFoundError } from "@core/@shared/domain/error/entity-not-found.error";
+import { PlayerId } from "@core/player/domain/player.aggregate";
 
 export class GameId extends Uuid {}
 
@@ -70,6 +71,7 @@ export interface GameCreationProps {
 export class Game extends AggregateRoot<GameId> {
   readonly name: string;
   readonly addressLink: string;
+  readonly organizerId: PlayerId;
   readonly schedule: GameSchedule;
   readonly gameType: GameType;
   readonly totalSpots: number;
@@ -82,6 +84,7 @@ export class Game extends AggregateRoot<GameId> {
 
   constructor(props: {
     id: GameId;
+    organizerId: PlayerId;
     name: string;
     addressLink: string;
     schedule: GameSchedule;
@@ -100,6 +103,13 @@ export class Game extends AggregateRoot<GameId> {
     this.pricePerPerson = props.pricePerPerson;
     this.intensity = props.intensity;
     this.ageRange = props.ageRange;
+    this.organizerId = props.organizerId;
+    this.participants.set(
+      props.organizerId.toString(),
+      GameParticipant.create({
+        playerId: props.organizerId.toString(),
+      }),
+    );
   }
 
   public static create(props: GameCreationProps): Game {
@@ -117,6 +127,7 @@ export class Game extends AggregateRoot<GameId> {
     );
     const game = new Game({
       id,
+      organizerId: PlayerId.create(props.organizerId),
       name: props.name,
       addressLink: props.addressLink,
       schedule,
