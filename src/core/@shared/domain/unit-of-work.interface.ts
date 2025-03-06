@@ -1,3 +1,5 @@
+import { AggregateRoot } from "@core/@shared/domain/aggregate-root";
+
 export interface IUnitOfWork {
   start(): Promise<void>;
 
@@ -8,4 +10,8 @@ export interface IUnitOfWork {
   getTransaction(): any;
 
   do<T>(workFn: (uow: IUnitOfWork) => Promise<T>): Promise<T>;
+
+  addAggregateRoot(aggregateRoot: AggregateRoot<any>): void;
+
+  getAggregateRoots(): AggregateRoot<any>[];
 }

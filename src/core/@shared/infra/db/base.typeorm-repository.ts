@@ -7,6 +7,7 @@ import { ISearchableRepository } from "@core/@shared/domain/repository/repositor
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { IModelMapper } from "@core/@shared/infra/db/model.mapper.interface";
 import { EntityNotFoundError } from "@core/@shared/domain/error/entity-not-found.error";
+import { UnitOfWorkTypeORM } from "@core/@shared/infra/db/unit-of-work.typeorm";
 
 export abstract class BaseTypeormRepository<
   Id extends Uuid,
@@ -23,22 +24,23 @@ export abstract class BaseTypeormRepository<
     protected readonly modelRepository: Repository<M>,
     protected readonly modelMapper: IModelMapper<A, M>,
     protected readonly uuidVo: { new (...args: any[]): Id } & typeof Uuid,
+    protected readonly uow: UnitOfWorkTypeORM,
   ) {}
 
   async save(aggregate: A): Promise<void> {
     const model = this.modelMapper.toModel(aggregate);
-    await this.modelRepository.save(model);
+    await this.getRepository().save(model);
   }
 
   async saveMany(aggregates: A[]): Promise<void> {
     const models = aggregates.map((aggregate) =>
       this.modelMapper.toModel(aggregate),
     );
-    await this.modelRepository.save(models);
+    await this.getRepository().save(models);
   }
 
   async findById(aggregateId: Id): Promise<A | null> {
-    const result = await this.modelRepository.findOne({
+    const result = await this.getRepository().findOne({
       where: {
         id: aggregateId.getValue(),
       } as FindOptionsWhere<M> | FindOptionsWhere<M>[],
@@ -51,12 +53,12 @@ export abstract class BaseTypeormRepository<
   }
 
   async findMany(): Promise<A[]> {
-    const result = await this.modelRepository.find();
+    const result = await this.getRepository().find();
     return result.map((model) => this.modelMapper.toDomain(model));
   }
 
   async findManyByIds(aggregateIds: Id[]): Promise<A[]> {
-    const result = await this.modelRepository.find({
+    const result = await this.getRepository().find({
       where: {
         id: In(aggregateIds.map((id) => id.getValue())),
       } as FindOptionsWhere<M> | FindOptionsWhere<M>[],
@@ -67,7 +69,7 @@ export abstract class BaseTypeormRepository<
   async existsById(
     aggregateIds: Id[],
   ): Promise<{ exists: Id[]; notExists: Id[] }> {
-    const existingModels = await this.modelRepository.find({
+    const existingModels = await this.getRepository().find({
       where: {
         id: In(aggregateIds.map((id) => id.getValue())),
       } as FindOptionsWhere<M> | FindOptionsWhere<M>[],
@@ -85,7 +87,7 @@ export abstract class BaseTypeormRepository<
   }
 
   async update(aggregate: A): Promise<void> {
-    const modelExists = await this.modelRepository.findOne({
+    const modelExists = await this.getRepository().findOne({
       where: {
         id: aggregate.getId().getValue(),
       } as FindOptionsWhere<M> | FindOptionsWhere<M>[],
@@ -94,11 +96,11 @@ export abstract class BaseTypeormRepository<
       throw new EntityNotFoundError(aggregate.getId(), this.getEntity());
     }
     const model = this.modelMapper.toModel(aggregate);
-    await this.modelRepository.save(model);
+    await this.getRepository().save(model);
   }
 
   async delete(aggregateId: Id): Promise<void> {
-    const deleteResult = await this.modelRepository.delete(
+    const deleteResult = await this.getRepository().delete(
       aggregateId.getValue(),
     );
     if (deleteResult.affected === 0) {
@@ -111,7 +113,7 @@ export abstract class BaseTypeormRepository<
     if (existingModels.notExists.length > 0) {
       throw new EntityNotFoundError(existingModels.notExists, this.getEntity());
     }
-    const deleteResult = await this.modelRepository.delete(
+    const deleteResult = await this.getRepository().delete(
       existingModels.exists.map((id) => id.getValue()),
     );
     if (deleteResult.affected !== existingModels.exists.length) {
@@ -122,4 +124,19 @@ export abstract class BaseTypeormRepository<
   abstract getEntity(): { new (...args: any[]): A };
 
   abstract search(props: SearchInput): Promise<SearchOutput>;
+
+  /**
+   * Retorna o repositório que deverá ser utilizado:
+   * - Se houver uma transação ativa, utiliza o manager do QueryRunner para obter o repositório.
+   * - Caso contrário, usa o repositório padrão.
+   */
+  protected getRepository(): Repository<M> {
+    const activeTransaction = this.uow.getTransaction();
+    if (activeTransaction) {
+      return activeTransaction.manager.getRepository<M>(
+        this.modelRepository.metadata.target as any,
+      );
+    }
+    return this.modelRepository;
+  }
 }
