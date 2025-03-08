@@ -6,14 +6,6 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
       const props = {
         userId: "9b6fb193-479d-45cf-8962-f158c2460b17",
         name: "Jogador Teste",
-        attackStat: 80,
-        defenseStat: 70,
-        setStat: 75,
-        serviceStat: 85,
-        blockStat: 90,
-        receptionStat: 65,
-        positioningStat: 80,
-        consistencyStat: 77,
       };
 
       const player = Player.create(props);
@@ -22,6 +14,15 @@ describe("[UNITÁRIO] - [Player] - [Suite de testes para Player]", () => {
       expect(player.userId).toBe(props.userId);
       expect(player.name).toBe(props.name);
       expect(player.getId()).toBeDefined();
+      expect(player.attackStat).toBe(50);
+      expect(player.defenseStat).toBe(50);
+      expect(player.setStat).toBe(50);
+      expect(player.serviceStat).toBe(50);
+      expect(player.blockStat).toBe(50);
+      expect(player.receptionStat).toBe(50);
+      expect(player.positioningStat).toBe(50);
+      expect(player.consistencyStat).toBe(50);
+      expect(player.hasBeenEvaluated).toBe(false);
       expect(player.notification.hasErrors()).toBe(false);
     });
 

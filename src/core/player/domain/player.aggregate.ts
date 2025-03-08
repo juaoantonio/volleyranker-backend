@@ -64,7 +64,7 @@ export class Player extends AggregateRoot<PlayerId> {
     this.receptionStat = props.receptionStat;
     this.positioningStat = props.positioningStat;
     this.consistencyStat = props.consistencyStat;
-    this._hasBeenEvaluated = props.hasBeenEvaluated;
+    this._hasBeenEvaluated = props.hasBeenEvaluated || false;
   }
 
   private _name: string;

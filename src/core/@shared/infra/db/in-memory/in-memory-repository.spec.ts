@@ -212,7 +212,7 @@ describe("InMemoryRepository Unit Tests", () => {
       Uuid.create("58167383-9c77-489b-a9a1-05caaa373de9"),
       "John Doe",
     );
-    expect(async () => {
+    await expect(async () => {
       await repo.update(aggregate);
     }).rejects.toThrowError(
       new EntityNotFoundError(
@@ -223,7 +223,7 @@ describe("InMemoryRepository Unit Tests", () => {
   });
 
   it("should throw EntityNotFoundError when trying to delete a non-existent aggregate root", async () => {
-    expect(async () => {
+    await expect(async () => {
       await repo.delete(Uuid.create("58167383-9c77-489b-a9a1-05caaa373de9"));
     }).rejects.toThrowError(
       new EntityNotFoundError(
@@ -239,7 +239,7 @@ describe("InMemoryRepository Unit Tests", () => {
       "John Doe",
     );
     await repo.save(aggregate1);
-    expect(async () => {
+    await expect(async () => {
       await repo.deleteManyByIds([
         Uuid.create("58167383-9c77-489b-a9a1-05caaa373de8"),
         Uuid.create("58167383-9c77-489b-a9a1-05caaa373de6"),
@@ -256,8 +256,8 @@ describe("InMemoryRepository Unit Tests", () => {
     );
   });
 
-  it("should throw InvalidArgumentError when passing invalid arguments to existsByIds", () => {
-    expect(async () => {
+  it("should throw InvalidArgumentError when passing invalid arguments to existsByIds", async () => {
+    await expect(async () => {
       await repo.existsById([]);
     }).rejects.toThrowError(
       new InvalidArgumentError(

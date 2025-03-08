@@ -32,7 +32,7 @@ describe("[UNITÁRIO] - [CreatePlayerUseCase] - [Suite de testes para CreatePlay
   });
 
   it("deve lançar uma exceção ao tentar criar um Player com nome inválido", async () => {
-    expect(async () => {
+    await expect(async () => {
       await createPlayerUseCase.execute({
         name: "jo", // nome inválido
         userId: "9b6fb193-479d-45cf-8962-f158c2460b07", // uuid inválido
@@ -41,7 +41,7 @@ describe("[UNITÁRIO] - [CreatePlayerUseCase] - [Suite de testes para CreatePlay
   });
 
   it("deve lançar uma exceção ao tentar criar um Player com userId inválido", async () => {
-    expect(async () => {
+    await expect(async () => {
       await createPlayerUseCase.execute({
         name: "Jogador", // nome válido
         userId: "9b6fb193-479d-45cf-8962-f158c2460b0", // uuid inválido

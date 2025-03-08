@@ -1,60 +1,65 @@
 import { BaseModel } from "@core/@shared/infra/db/base.model";
-import { Column } from "typeorm";
+import { Column, Entity } from "typeorm";
 
+@Entity("players")
 export class PlayerModel extends BaseModel {
   @Column({
     type: "uuid",
     unique: true,
+    name: "user_id",
   })
   userId: string;
 
   @Column({
     type: "varchar",
+    length: 100,
+    name: "name",
   })
   name: string;
 
   @Column({
     type: "boolean",
+    name: "has_been_evaluated",
   })
   hasBeenEvaluated: boolean;
 
   @Column({
-    type: "number",
+    name: "attack_stat",
   })
   attackStat: number;
 
   @Column({
-    type: "number",
+    name: "defense_stat",
   })
   defenseStat: number;
 
   @Column({
-    type: "number",
+    name: "set_stat",
   })
   setStat: number;
 
   @Column({
-    type: "number",
+    name: "service_stat",
   })
   serviceStat: number;
 
   @Column({
-    type: "number",
+    name: "block_stat",
   })
   blockStat: number;
 
   @Column({
-    type: "number",
+    name: "reception_stat",
   })
   receptionStat: number;
 
   @Column({
-    type: "number",
+    name: "positioning_stat",
   })
   positioningStat: number;
 
   @Column({
-    type: "number",
+    name: "consistency_stat",
   })
   consistencyStat: number;
 

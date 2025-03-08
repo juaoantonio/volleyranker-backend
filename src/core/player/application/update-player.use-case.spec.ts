@@ -36,7 +36,7 @@ describe("[UNITÁRIO] - [UpdatePlayerUseCase] - [Suite de testes para UpdatePlay
   });
 
   it("deve lançar uma exceção ao tentar atualizar um Player inexistente", async () => {
-    expect(async () => {
+    await expect(async () => {
       await updatePlayerUseCase.execute({
         id: "9b6fb193-479d-45cf-8962-f158c2460b08",
         name: "Jogador Atualizado",

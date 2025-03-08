@@ -18,12 +18,12 @@ describe("Schema Unit Tests", () => {
         expectValidate(schema, {}).toContain('"DB_VENDOR" is required');
 
         expectValidate(schema, { DB_VENDOR: 5 }).toContain(
-          '"DB_VENDOR" must be one of [mysql, sqlite]',
+          '"DB_VENDOR" must be one of [postgres, sqlite]',
         );
       });
 
       test("valid cases", () => {
-        const arrange = ["mysql", "sqlite"];
+        const arrange = ["postgres", "sqlite"];
 
         arrange.forEach((value) => {
           expectValidate(schema, { DB_VENDOR: value }).not.toContain(
@@ -57,7 +57,7 @@ describe("Schema Unit Tests", () => {
           '"DB_DATABASE" is required',
         );
 
-        expectValidate(schema, { DB_VENDOR: "mysql" }).toContain(
+        expectValidate(schema, { DB_VENDOR: "postgres" }).toContain(
           '"DB_DATABASE" is required',
         );
 
@@ -70,7 +70,7 @@ describe("Schema Unit Tests", () => {
         const arrange = [
           { DB_VENDOR: "sqlite" },
           { DB_VENDOR: "sqlite", DB_DATABASE: "some value" },
-          { DB_VENDOR: "mysql", DB_DATABASE: "some value" },
+          { DB_VENDOR: "postgres", DB_DATABASE: "some value" },
         ];
 
         arrange.forEach((value) => {
@@ -85,7 +85,7 @@ describe("Schema Unit Tests", () => {
           '"DB_USERNAME" is required',
         );
 
-        expectValidate(schema, { DB_VENDOR: "mysql" }).toContain(
+        expectValidate(schema, { DB_VENDOR: "postgres" }).toContain(
           '"DB_USERNAME" is required',
         );
 
@@ -98,7 +98,7 @@ describe("Schema Unit Tests", () => {
         const arrange = [
           { DB_VENDOR: "sqlite" },
           { DB_VENDOR: "sqlite", DB_USERNAME: "some value" },
-          { DB_VENDOR: "mysql", DB_USERNAME: "some value" },
+          { DB_VENDOR: "postgres", DB_USERNAME: "some value" },
         ];
 
         arrange.forEach((value) => {
@@ -113,7 +113,7 @@ describe("Schema Unit Tests", () => {
           '"DB_PASSWORD" is required',
         );
 
-        expectValidate(schema, { DB_VENDOR: "mysql" }).toContain(
+        expectValidate(schema, { DB_VENDOR: "postgres" }).toContain(
           '"DB_PASSWORD" is required',
         );
 
@@ -126,7 +126,7 @@ describe("Schema Unit Tests", () => {
         const arrange = [
           { DB_VENDOR: "sqlite" },
           { DB_VENDOR: "sqlite", DB_PASSWORD: "some value" },
-          { DB_VENDOR: "mysql", DB_PASSWORD: "some value" },
+          { DB_VENDOR: "postgres", DB_PASSWORD: "some value" },
         ];
 
         arrange.forEach((value) => {
@@ -141,7 +141,7 @@ describe("Schema Unit Tests", () => {
           '"DB_PORT" is required',
         );
 
-        expectValidate(schema, { DB_VENDOR: "mysql" }).toContain(
+        expectValidate(schema, { DB_VENDOR: "postgres" }).toContain(
           '"DB_PORT" is required',
         );
 
@@ -159,8 +159,8 @@ describe("Schema Unit Tests", () => {
           { DB_VENDOR: "sqlite" },
           { DB_VENDOR: "sqlite", DB_PORT: 10 },
           { DB_VENDOR: "sqlite", DB_PORT: "10" },
-          { DB_VENDOR: "mysql", DB_PORT: 10 },
-          { DB_VENDOR: "mysql", DB_PORT: "10" },
+          { DB_VENDOR: "postgres", DB_PORT: 10 },
+          { DB_VENDOR: "postgres", DB_PORT: "10" },
         ];
 
         arrange.forEach((value) => {
@@ -214,8 +214,8 @@ describe("Schema Unit Tests", () => {
 });
 
 describe("ConfigModule Unit Tests", () => {
-  it("should throw an error when env vars are invalid", () => {
-    expect(async () => {
+  it("should throw an error when env vars are invalid", async () => {
+    await expect(async () => {
       Test.createTestingModule({
         imports: [
           await ConfigModule.forRoot({
@@ -223,7 +223,7 @@ describe("ConfigModule Unit Tests", () => {
           }),
         ],
       });
-    }).rejects.toThrowError('"DB_VENDOR" must be one of [mysql, sqlite]');
+    }).rejects.toThrowError('"DB_VENDOR" must be one of [postgres, sqlite]');
   });
 
   it("should be valid", () => {
