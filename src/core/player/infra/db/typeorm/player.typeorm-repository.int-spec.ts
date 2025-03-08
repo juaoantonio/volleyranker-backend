@@ -6,13 +6,15 @@ import { Player, PlayerId } from "@core/player/domain/player.aggregate";
 import { UnitOfWorkTypeORM } from "@core/@shared/infra/db/unit-of-work.typeorm";
 
 describe("[INTEGRAÇÃO] - [PlayerTypeormRepository] - Suíte de testes", () => {
+  const defaultPlayer = Player.fake().aPlayer().build();
+
   let uow: UnitOfWorkTypeORM;
   let playerRepository: PlayerTypeormRepository;
   const setup = setupTypeOrmForIntegrationTests({
     entities: [PlayerModel],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     uow = new UnitOfWorkTypeORM(setup.dataSource);
     playerRepository = new PlayerTypeormRepository(
       setup.dataSource.getRepository(PlayerModel),
@@ -20,6 +22,7 @@ describe("[INTEGRAÇÃO] - [PlayerTypeormRepository] - Suíte de testes", () => 
       PlayerId,
       uow,
     );
+    await playerRepository.save(defaultPlayer);
   });
 
   afterAll(async () => {
@@ -40,22 +43,20 @@ describe("[INTEGRAÇÃO] - [PlayerTypeormRepository] - Suíte de testes", () => 
       await playerRepository.saveMany(players);
       const allPlayers = await playerRepository.findMany();
       // Verifica se pelo menos 3 players estão presentes (pode haver outros de testes anteriores)
-      expect(allPlayers.length).toBeGreaterThanOrEqual(3);
+      expect(allPlayers.length).toBe(4);
     });
 
     it("deve recuperar um player por id (findById)", async () => {
-      const player = Player.fake().aPlayer().build();
-      await playerRepository.save(player);
-      const found = await playerRepository.findById(player.getId());
+      const found = await playerRepository.findById(defaultPlayer.getId());
       expect(found).not.toBeNull();
-      expect(found.equals(player)).toBe(true);
+      expect(found.equals(defaultPlayer)).toBe(true);
     });
 
     it("deve recuperar vários players (findMany)", async () => {
       const players = Player.fake().thePlayers(3).build();
       await playerRepository.saveMany(players);
       const foundPlayers = await playerRepository.findMany();
-      expect(foundPlayers.length).toBeGreaterThanOrEqual(3);
+      expect(foundPlayers.length).toBe(4);
     });
 
     it("deve recuperar players por ids (findManyByIds)", async () => {
@@ -138,7 +139,7 @@ describe("[INTEGRAÇÃO] - [PlayerTypeormRepository] - Suíte de testes", () => 
       await playerRepository.saveMany(players);
       await uow.commit();
       const foundPlayers = await playerRepository.findMany();
-      expect(foundPlayers.length).toBeGreaterThanOrEqual(3);
+      expect(foundPlayers.length).toBe(4);
     });
 
     it("não deve salvar vários players com saveMany dentro de uma transação (rollback)", async () => {
