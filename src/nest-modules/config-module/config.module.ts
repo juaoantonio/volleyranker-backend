@@ -7,7 +7,7 @@ import { join } from "path";
 import Joi from "joi";
 
 type DB_SCHEMA_TYPE = {
-  DB_VENDOR: "mysql" | "sqlite";
+  DB_VENDOR: "postgres" | "sqlite";
   DB_HOST: string;
   DB_PORT: number;
   DB_USERNAME: string;
@@ -21,22 +21,22 @@ type DB_SCHEMA_TYPE = {
 export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE;
 
 export const CONFIG_DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
-  DB_VENDOR: Joi.string().required().valid("mysql", "sqlite"),
+  DB_VENDOR: Joi.string().required().valid("postgres", "sqlite"),
   DB_HOST: Joi.string().required(),
   DB_DATABASE: Joi.string().when("DB_VENDOR", {
-    is: "mysql",
+    is: "postgres",
     then: Joi.required(),
   }),
   DB_USERNAME: Joi.string().when("DB_VENDOR", {
-    is: "mysql",
+    is: "postgres",
     then: Joi.required(),
   }),
   DB_PASSWORD: Joi.string().when("DB_VENDOR", {
-    is: "mysql",
+    is: "postgres",
     then: Joi.required(),
   }),
   DB_PORT: Joi.number().integer().when("DB_VENDOR", {
-    is: "mysql",
+    is: "postgres",
     then: Joi.required(),
   }),
   DB_LOGGING: Joi.boolean().required(),

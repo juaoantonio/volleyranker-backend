@@ -12,10 +12,10 @@ const MODELS = [ExampleModel];
       useFactory: (configService: ConfigService<CONFIG_SCHEMA_TYPE>) => {
         const vendor = configService.get("DB_VENDOR");
         switch (vendor) {
-          case "mysql":
+          case "postgres":
             return {
               entities: configService.get("DB_AUTO_LOAD_MODELS") ? [] : MODELS,
-              type: "mysql",
+              type: "postgres",
               host: configService.get("DB_HOST"),
               database: configService.get("DB_DATABASE"),
               port: configService.get("DB_PORT"),

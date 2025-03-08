@@ -8,7 +8,7 @@ import {
 type PropOrFactory<T> = T | ((index: number) => T);
 
 export class PlayerFakeBuilder<TBuild = Player> {
-  private countObjs: number;
+  private readonly countObjs: number;
   private chance: Chance.Chance;
 
   private constructor(countObjs: number = 1) {
@@ -196,7 +196,7 @@ export class PlayerFakeBuilder<TBuild = Player> {
       return new Player(constructorProps);
     });
 
-    return this.countObjs === 1 ? (players[0] as any) : players;
+    return this.countObjs === 1 ? (players[0] as any) : (players as any);
   }
 
   // Método auxiliar para obter um valor único (para getters)

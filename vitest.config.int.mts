@@ -7,11 +7,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./test/vitest.setup.ts"],
     root: "./",
-    include: ["src/**/*.e2e-spec.ts", "test/**/*.e2e-spec.ts"],
+    include: ["src/**/*.int-spec.ts", "test/**/*.int-spec.ts"],
     exclude: ["src/**/*.spec.ts", "test/**/*.spec.ts"],
-    testTimeout: 60000, // 60 seconds
-    hookTimeout: 60000, // 60 seconds
-    fileParallelism: false,
   },
 
   plugins: [

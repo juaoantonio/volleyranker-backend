@@ -1,4 +1,4 @@
-import { ImageFile } from "@nest/shared-module/decorators/uploaded-image-file.decorator";
+import { ImageFile } from "@core/@shared/infra/types";
 
 export class ImageMockBuilder {
   private readonly image: ImageFile;
