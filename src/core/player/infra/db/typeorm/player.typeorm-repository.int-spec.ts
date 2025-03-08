@@ -11,6 +11,7 @@ describe("[INTEGRAÇÃO] - [PlayerTypeormRepository] - Suíte de testes", () => 
   let uow: UnitOfWorkTypeORM;
   let playerRepository: PlayerTypeormRepository;
   const setup = setupTypeOrmForIntegrationTests({
+    logging: true,
     entities: [PlayerModel],
   });
 
