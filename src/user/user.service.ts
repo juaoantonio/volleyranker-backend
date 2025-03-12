@@ -15,10 +15,6 @@ export class UserService {
     await this.usersRepository.save(createUserDto);
   }
 
-  async findByUsername(username: string) {
-    return this.usersRepository.findOne({ where: { username: username } });
-  }
-
   async findByEmail(email: string) {
     return this.usersRepository.findOne({ where: { email: email } });
   }
