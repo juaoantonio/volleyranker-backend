@@ -24,7 +24,13 @@ type GOOGLE_OAUTH_SCHEMA_TYPE = {
   GOOGLE_OAUTH_REDIRECT_URI: string;
 };
 
-export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE & GOOGLE_OAUTH_SCHEMA_TYPE;
+type JWT_SCHEMA_TYPE = {
+  JWT_SECRET: string;
+};
+
+export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE &
+  GOOGLE_OAUTH_SCHEMA_TYPE &
+  JWT_SCHEMA_TYPE;
 
 export const CONFIG_DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
   DB_VENDOR: Joi.string().required().valid("postgres", "sqlite"),
@@ -57,6 +63,10 @@ export const GOOGLE_OAUTH_SCHEMA: Joi.StrictSchemaMap<GOOGLE_OAUTH_SCHEMA_TYPE> 
     GOOGLE_OAUTH_REDIRECT_URI: Joi.string().required(),
   };
 
+export const JWT_SCHEMA: Joi.StrictSchemaMap<JWT_SCHEMA_TYPE> = {
+  JWT_SECRET: Joi.string().required(),
+};
+
 // https://docs.nestjs.com/modules#dynamic-modules
 // https://docs.nestjs.com/techniques/configuration#configuration
 @Module({})
@@ -73,6 +83,7 @@ export class ConfigModule extends NestConfigModule {
       validationSchema: Joi.object({
         ...CONFIG_DB_SCHEMA,
         ...GOOGLE_OAUTH_SCHEMA,
+        ...JWT_SCHEMA,
       }),
       ...otherOptions,
     });
