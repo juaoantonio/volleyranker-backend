@@ -18,7 +18,7 @@ export class AuthService {
     if (!isPasswordMatch)
       throw new UnauthorizedException("Invalid credentials");
 
-    return { id: user.id };
+    return { id: user.id, email: user.email };
   }
 
   async login(userId: string, email: string) {

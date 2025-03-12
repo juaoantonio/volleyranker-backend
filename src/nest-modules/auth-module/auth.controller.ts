@@ -20,17 +20,14 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(@Req() req: LocalAuthRequest) {
-    const token = this.authService.login(req.user.id, req.user.email);
     return {
-      access_token: await this.authService.login(req.user.id, req.user.email),
+      access: await this.authService.login(req.user.id, req.user.email),
     };
   }
 
   @UseGuards(GoogleAuthGuard)
   @Get("google/login")
-  async googleLogin() {
-    return "google login";
-  }
+  async googleLogin() {}
 
   @UseGuards(GoogleAuthGuard)
   @Get("google/callback")

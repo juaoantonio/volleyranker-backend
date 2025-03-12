@@ -7,8 +7,8 @@ import { JwtAuthGuard } from "../nest-modules/auth-module/guards/jwt-auth/jwt-au
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  @Post("register")
+  register(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
