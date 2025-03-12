@@ -18,6 +18,12 @@ type DB_SCHEMA_TYPE = {
   DB_SYNCHRONIZE?: boolean;
 };
 
+type GOOGLE_OAUTH_SCHEMA_TYPE = {
+  GOOGLE_OAUTH_CLIENT_ID: string;
+  GOOGLE_OAUTH_CLIENT_SECRET: string;
+  GOOGLE_OAUTH_REDIRECT_URI: string;
+};
+
 export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE;
 
 export const CONFIG_DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
@@ -44,6 +50,13 @@ export const CONFIG_DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
   DB_SYNCHRONIZE: Joi.boolean().default(false),
 };
 
+export const GOOGLE_OAUTH_SCHEMA: Joi.StrictSchemaMap<GOOGLE_OAUTH_SCHEMA_TYPE> =
+  {
+    GOOGLE_OAUTH_CLIENT_ID: Joi.string().required(),
+    GOOGLE_OAUTH_CLIENT_SECRET: Joi.string().required(),
+    GOOGLE_OAUTH_REDIRECT_URI: Joi.string().required(),
+  };
+
 // https://docs.nestjs.com/modules#dynamic-modules
 // https://docs.nestjs.com/techniques/configuration#configuration
 @Module({})
@@ -59,6 +72,7 @@ export class ConfigModule extends NestConfigModule {
       ],
       validationSchema: Joi.object({
         ...CONFIG_DB_SCHEMA,
+        ...GOOGLE_OAUTH_SCHEMA,
       }),
       ...otherOptions,
     });
