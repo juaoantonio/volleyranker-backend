@@ -24,7 +24,7 @@ type GOOGLE_OAUTH_SCHEMA_TYPE = {
   GOOGLE_OAUTH_REDIRECT_URI: string;
 };
 
-export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE;
+export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE & GOOGLE_OAUTH_SCHEMA_TYPE;
 
 export const CONFIG_DB_SCHEMA: Joi.StrictSchemaMap<DB_SCHEMA_TYPE> = {
   DB_VENDOR: Joi.string().required().valid("postgres", "sqlite"),
