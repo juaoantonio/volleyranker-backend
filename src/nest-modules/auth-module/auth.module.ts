@@ -10,10 +10,11 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { AuthService } from "./auth.service";
 import { UserModule } from "../../user/user.module";
+import { JwtStrategy } from "./strategies/jwt.strategy";
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, LocalStrategy],
+  providers: [AuthService, GoogleStrategy, LocalStrategy, JwtStrategy],
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],

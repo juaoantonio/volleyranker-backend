@@ -4,7 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Request,
+  Req,
   UseGuards,
 } from "@nestjs/common";
 import { GoogleAuthGuard } from "./guards/google-auth/google-auth.guard";
@@ -19,9 +19,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post("login")
-  async login(@Request() req: LocalAuthRequest) {
+  async login(@Req() req: LocalAuthRequest) {
+    const token = this.authService.login(req.user.id, req.user.email);
     return {
-      access_token: this.authService.login(req.user.id, req.user.email),
+      access_token: await this.authService.login(req.user.id, req.user.email),
     };
   }
 

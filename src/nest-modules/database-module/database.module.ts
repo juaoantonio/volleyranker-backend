@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CONFIG_SCHEMA_TYPE } from "../config-module/config.module";
-import { ExampleModel } from "@core/example/infra/db/typeorm/example.model";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { UserModel } from "../../user/entities/user.entity";
 
-const MODELS = [ExampleModel];
+const MODELS = [UserModel];
 
 @Module({
   imports: [

@@ -6,7 +6,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
-
+import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
 
 export enum UserStatus {
@@ -19,10 +19,12 @@ export enum UserRole {
   CLIENT = "client",
 }
 
-@Entity()
-export class User {
+@Entity({
+  name: "users",
+})
+export class UserModel {
   @PrimaryColumn({ type: "uuid" })
-  id: number;
+  id: string;
 
   @Column({
     unique: true,
@@ -33,14 +35,14 @@ export class User {
   password: string;
 
   @Column({
-    type: "enum",
+    type: "simple-enum",
     enum: UserRole,
     default: UserRole.CLIENT,
   })
   role: UserRole;
 
   @Column({
-    type: "enum",
+    type: "simple-enum",
     enum: UserStatus,
     default: UserStatus.ACTIVE,
   })
@@ -51,6 +53,11 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @BeforeInsert()
+  generateId() {
+    this.id = uuidv4();
+  }
 
   @BeforeInsert()
   async hashPassword() {
