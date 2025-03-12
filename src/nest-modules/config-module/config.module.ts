@@ -27,8 +27,8 @@ type GOOGLE_OAUTH_SCHEMA_TYPE = {
 type JWT_SCHEMA_TYPE = {
   JWT_SECRET: string;
   REFRESH_JWT_SECRET: string;
-  JWT_EXPIRES_IN?: string;
-  REFRESH_JWT_TOKEN_EXPIRES_IN?: string;
+  JWT_EXPIRES_IN: string;
+  REFRESH_JWT_TOKEN_EXPIRES_IN: string;
 };
 
 export type CONFIG_SCHEMA_TYPE = DB_SCHEMA_TYPE &
@@ -68,9 +68,9 @@ export const GOOGLE_OAUTH_SCHEMA: Joi.StrictSchemaMap<GOOGLE_OAUTH_SCHEMA_TYPE> 
 
 export const JWT_SCHEMA: Joi.StrictSchemaMap<JWT_SCHEMA_TYPE> = {
   JWT_SECRET: Joi.string().required(),
-  JWT_EXPIRES_IN: Joi.string().default("1d"),
+  JWT_EXPIRES_IN: Joi.string().required(),
   REFRESH_JWT_SECRET: Joi.string().required(),
-  REFRESH_JWT_TOKEN_EXPIRES_IN: Joi.string().default("7d"),
+  REFRESH_JWT_TOKEN_EXPIRES_IN: Joi.string().required(),
 };
 
 // https://docs.nestjs.com/modules#dynamic-modules

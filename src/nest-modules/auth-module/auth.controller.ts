@@ -11,6 +11,7 @@ import { GoogleAuthGuard } from "./guards/google-auth/google-auth.guard";
 import { LocalAuthGuard } from "./guards/local-auth/local-auth.guard";
 import { AuthService } from "./auth.service";
 import { LocalAuthRequest } from "./types/local-auth.request";
+import { RefreshAuthGuard } from "./guards/refresh-auth/refresh-auth.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -21,6 +22,12 @@ export class AuthController {
   @Post("login")
   async login(@Req() req: LocalAuthRequest) {
     return this.authService.login(req.user.id, req.user.email);
+  }
+
+  @UseGuards(RefreshAuthGuard)
+  @Post("refresh")
+  async refreshToken(@Req() req) {
+    return this.authService.refreshToken(req.user.id, req.user.email);
   }
 
   @UseGuards(GoogleAuthGuard)

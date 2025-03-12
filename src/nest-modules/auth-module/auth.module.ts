@@ -11,17 +11,26 @@ import { ConfigService } from "@nestjs/config";
 import { AuthService } from "./auth.service";
 import { UserModule } from "../../user/user.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
+import { RefreshJwtStrategy } from "./strategies/refresh-jwt.strategy";
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    GoogleStrategy,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshJwtStrategy,
+  ],
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService<CONFIG_SCHEMA_TYPE>) => ({
-        secret: configService.get("JWT_SECRET"),
-        signOptions: { expiresIn: "1d" },
-      }),
+      useFactory: async (configService: ConfigService<CONFIG_SCHEMA_TYPE>) => {
+        return {
+          secret: configService.get("JWT_SECRET"),
+          signOptions: { expiresIn: configService.get("JWT_EXPIRES_IN") },
+        };
+      },
       inject: [ConfigService],
     }),
     UserModule,
