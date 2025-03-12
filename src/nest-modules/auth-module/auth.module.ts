@@ -8,10 +8,12 @@ import {
   ConfigModule,
 } from "../config-module/config.module";
 import { ConfigService } from "@nestjs/config";
+import { AuthService } from "./auth.service";
+import { UserModule } from "../../user/user.module";
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthModule, GoogleStrategy, LocalStrategy],
+  providers: [AuthService, GoogleStrategy, LocalStrategy],
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -21,6 +23,7 @@ import { ConfigService } from "@nestjs/config";
       }),
       inject: [ConfigService],
     }),
+    UserModule,
   ],
 })
 export class AuthModule {}
