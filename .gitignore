@@ -399,3 +399,4 @@ memory
 dist
 .webpack
 .serverless/**/*.zip
+database
