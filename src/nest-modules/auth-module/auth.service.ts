@@ -5,6 +5,7 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthJwtPayload } from "./types/auth.jwt-payload";
 import { CONFIG_SCHEMA_TYPE } from "../config-module/config.module";
 import { ConfigService } from "@nestjs/config";
+import * as argon2 from "argon2";
 
 @Injectable()
 export class AuthService {
@@ -25,23 +26,50 @@ export class AuthService {
   }
 
   async login(userId: string, email: string) {
-    const payload: AuthJwtPayload = { sub: userId, email };
-    const access = this.jwtService.sign(payload);
-    const refresh = this.jwtService.sign(payload, {
-      expiresIn: this.configService.get("REFRESH_JWT_TOKEN_EXPIRES_IN"),
-      secret: this.configService.get("REFRESH_JWT_SECRET"),
-    });
+    const { access, refresh } = await this.generateTokens(userId, email);
+    const hashedRefreshToken = await argon2.hash(refresh);
+    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken);
     return {
       access,
       refresh,
     };
   }
 
-  refreshToken(userId: string, email: string) {
+  async generateTokens(userId: string, email: string) {
     const payload: AuthJwtPayload = { sub: userId, email };
-    const access = this.jwtService.sign(payload);
+    const [access, refresh] = await Promise.all([
+      this.jwtService.signAsync(payload),
+      this.jwtService.signAsync(payload, {
+        expiresIn: this.configService.get("REFRESH_JWT_TOKEN_EXPIRES_IN"),
+        secret: this.configService.get("REFRESH_JWT_SECRET"),
+      }),
+    ]);
     return {
       access,
+      refresh,
     };
+  }
+
+  async refreshToken(userId: string, email: string) {
+    const { access, refresh } = await this.generateTokens(userId, email);
+    const hashedRefreshToken = await argon2.hash(refresh);
+    await this.userService.updateHashedRefreshToken(userId, hashedRefreshToken);
+    return {
+      access,
+      refresh,
+    };
+  }
+
+  async validateRefreshToken(userId: string, refreshToken: string) {
+    const user = await this.userService.findOne(userId);
+    if (!user || !user.hashedRefreshToken)
+      throw new UnauthorizedException("Invalid refresh token");
+    const refreshTokenMatch = await argon2.verify(
+      user.hashedRefreshToken,
+      refreshToken,
+    );
+    if (!refreshTokenMatch)
+      throw new UnauthorizedException("Invalid refresh token");
+    return { id: userId, email: user.email };
   }
 }

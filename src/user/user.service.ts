@@ -25,14 +25,14 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
+    return this.userRepository.update(userId, { hashedRefreshToken });
   }
 
   async findOne(id: string) {
     return this.userRepository.findOne({
       where: { id },
-      select: ["id", "email", "status", "role"],
+      select: ["id", "email", "status", "role", "hashedRefreshToken"],
     });
   }
 

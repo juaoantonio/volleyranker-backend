@@ -35,6 +35,11 @@ export class UserModel {
   password: string;
 
   @Column({
+    nullable: true,
+  })
+  hashedRefreshToken: string;
+
+  @Column({
     type: "simple-enum",
     enum: UserRole,
     default: UserRole.CLIENT,
