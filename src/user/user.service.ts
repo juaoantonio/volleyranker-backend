@@ -25,8 +25,13 @@ export class UserService {
     });
   }
 
-  async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
-    return this.userRepository.update(userId, { hashedRefreshToken });
+  async updateHashedRefreshToken(
+    userId: string,
+    hashedRefreshToken: string | null,
+  ) {
+    return this.userRepository.update(userId, {
+      hashedRefreshToken: hashedRefreshToken,
+    });
   }
 
   async findOne(id: string) {

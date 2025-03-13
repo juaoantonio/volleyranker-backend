@@ -72,4 +72,8 @@ export class AuthService {
       throw new UnauthorizedException("Invalid refresh token");
     return { id: userId, email: user.email };
   }
+
+  async signOut(userId: string) {
+    await this.userService.updateHashedRefreshToken(userId, null);
+  }
 }
