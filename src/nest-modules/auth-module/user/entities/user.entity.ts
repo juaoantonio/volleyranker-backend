@@ -8,15 +8,11 @@ import {
 } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
+import { Role } from "../../enums/role.enum";
 
 export enum UserStatus {
   ACTIVE = "active",
   INACTIVE = "inactive",
-}
-
-export enum UserRole {
-  ADMIN = "admin",
-  CLIENT = "client",
 }
 
 @Entity({
@@ -41,10 +37,10 @@ export class UserModel {
 
   @Column({
     type: "simple-enum",
-    enum: UserRole,
-    default: UserRole.CLIENT,
+    enum: Role,
+    default: Role.USER,
   })
-  role: UserRole;
+  role: Role;
 
   @Column({
     type: "simple-enum",

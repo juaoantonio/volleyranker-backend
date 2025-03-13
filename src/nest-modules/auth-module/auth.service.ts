@@ -6,6 +6,7 @@ import { AuthJwtPayload } from "./types/auth.jwt-payload";
 import { CONFIG_SCHEMA_TYPE } from "../config-module/config.module";
 import { ConfigService } from "@nestjs/config";
 import * as argon2 from "argon2";
+import { CurrentUser } from "./types/current-user.type";
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService<CONFIG_SCHEMA_TYPE>,
   ) {}
+
+  async validateJwtUser(userId: string): Promise<CurrentUser> {
+    const user = await this.userService.findOne(userId);
+    if (!user) throw new UnauthorizedException("User not found!");
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+  }
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
