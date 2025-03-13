@@ -11,7 +11,6 @@ import {
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { JwtAuthGuard } from "../guards/jwt-auth/jwt-auth.guard";
-import { RolesGuard } from "../guards/roles/roles.guard";
 import { Roles } from "../decorators/role.decorator";
 import { Role } from "../enums/role.enum";
 
@@ -31,8 +30,6 @@ export class UserController {
   }
 
   @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
   @Delete(":id")
   async deleteUser(@Param("id") id: string) {
     await this.userService.remove(id);

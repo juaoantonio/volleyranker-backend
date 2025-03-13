@@ -12,16 +12,13 @@ import { AuthService } from "./auth.service";
 import { UserModule } from "./user/user.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { RefreshJwtStrategy } from "./strategies/refresh-jwt.strategy";
+import { APP_GUARD } from "@nestjs/core";
+import { JwtAuthGuard } from "./guards/jwt-auth/jwt-auth.guard";
+import { RolesGuard } from "./guards/roles/roles.guard";
 
 @Module({
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    GoogleStrategy,
-    LocalStrategy,
-    JwtStrategy,
-    RefreshJwtStrategy,
-  ],
+
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -34,6 +31,21 @@ import { RefreshJwtStrategy } from "./strategies/refresh-jwt.strategy";
       inject: [ConfigService],
     }),
     UserModule,
+  ],
+  providers: [
+    AuthService,
+    GoogleStrategy,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshJwtStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AuthModule {}
