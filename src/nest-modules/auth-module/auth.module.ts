@@ -9,7 +9,7 @@ import {
 } from "../config-module/config.module";
 import { ConfigService } from "@nestjs/config";
 import { AuthService } from "./auth.service";
-import { UserModule } from "../../user/user.module";
+import { UserModule } from "./user/user.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { RefreshJwtStrategy } from "./strategies/refresh-jwt.strategy";
 

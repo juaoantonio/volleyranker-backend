@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CONFIG_SCHEMA_TYPE } from "../config-module/config.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserModel } from "../../user/entities/user.entity";
+import { UserModel } from "../auth-module/user/entities/user.entity";
 
 const MODELS = [UserModel];
 
